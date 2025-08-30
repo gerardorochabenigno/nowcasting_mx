@@ -1,0 +1,7 @@
+.env
+data/
+tmp/
+*.DS_Store
+*.log
+src/__pycache__/connector.cpython-311.pyc
+*.pyc

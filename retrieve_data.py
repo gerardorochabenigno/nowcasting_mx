@@ -15,14 +15,14 @@ load_dotenv()
 os.makedirs('logs', exist_ok=True)
 
 # Creamos carpetas de datos
-os.makedirs('data/banxico/csv', exist_ok=True)
-os.makedirs('data/banxico/json', exist_ok=True)
+os.makedirs('data/raw/banxico/csv', exist_ok=True)
+os.makedirs('data/raw/banxico/json', exist_ok=True)
 
-os.makedirs('data/inegi/csv', exist_ok=True)
-os.makedirs('data/inegi/json', exist_ok=True)
+os.makedirs('data/raw/inegi/csv', exist_ok=True)
+os.makedirs('data/raw/inegi/json', exist_ok=True)
 
-os.makedirs('data/fred/csv', exist_ok=True)
-os.makedirs('data/fred/json', exist_ok=True)
+os.makedirs('data/raw/fred/csv', exist_ok=True)
+os.makedirs('data/raw/fred/json', exist_ok=True)
 
 # Configuramos el logging
 logging.basicConfig(
@@ -35,15 +35,41 @@ logging.basicConfig(
 )
 
 
+# Series de INEGI
+inegi_series =  {
+    '736181':'pib_inegi',  # Variable objetivo, desestacionalizada inegi
+    '737219':'igae_inegi', # desestaconalizada inegi
+    '740987':'consumo_privado_inegi', # desestacionalizada-inegi
+    '736885':'actividad_industrial_inegi', # desestacionalizada-inegi
+    '736969':'ind_manufacturera_inegi', # desestacionalizada-inegi
+    '736941':'construccion_inegi', # desestacionalizada-inegi
+    '214307':'indicador_adelantado_inegi', # sin estacionalizar
+    '718508':'emec_inegi', #comercio al por mayor - sin desestacionalizar
+    '214313':'bolsa_mexicana_inegi', # sin estacionalizar
+    '736472':'cemento_inegi', # sin estacionalizar
+    '214317':'tiie_inegi', # sin estacionalizar
+    '736478':'aluminio_inegi', # sin estacionalizar
+    '736514':'refacciones_inegi', # sin estacionalizar
+    '736412':'elec_agua_gas_ductos_inegi', # sin estacionalizar # Corroborar
+    '736516':'equipo_ferroviario' # sin estacionalizar
+}
+
+# Series de la FED
+fred_series = {
+    'INDPRO':'produccion_industrial_fred', # desestacionalizada fred
+}
+
+# Series de Banxico
+banxico_series = {
+    'SE36595':'importaciones_banxico', # sin estacionalizar
+    'SE35398':'exportaciones_manufac_banxico', # sin estacionalizar # https://www.banxico.org.mx/SieInternet/consultarDirectorioInternetAction.do?accion=consultarCuadro&idCuadro=CE125&sector=1&locale=es
+    'SE36593':'exportaciones_total_banxico', # sin estacionalizar
+    'SF311438':'m4_banxico', # sin estacionalizar
+}
+
 fred_api_key = os.getenv('FRED_API_KEY')
 inegi_banco_token = os.getenv('INEGI_BANCO_TOKEN')
 banxico_token = os.getenv('BANXICO_API_TOKEN')
-
-banxico_series = ['SF43783']
-inegi_series =  ['737121', '737219', '740933'] # IGAE serie original, IGAE desestacionalizada, Consumo privado
-fred_series = ['FEDFUNDS']
-
-
 
 if __name__=='__main__':
     
@@ -56,7 +82,7 @@ if __name__=='__main__':
         banxico = BanxicoConnector(banxico_token)
 
         # Series de Banxico
-        for serie in banxico_series:
+        for serie in banxico_series.keys():
             data, metadata = banxico.get_banxico_data(serie)
             if not data.empty:
                 BanxicoConnector.save_data(data[serie], metadata)
@@ -64,7 +90,7 @@ if __name__=='__main__':
                 logging.warning(f"No se obtuvieron datos para la serie {serie}")
 
         # Series de INEGI
-        for serie in inegi_series:
+        for serie in inegi_series.keys():
             data, metadata = inegi.get_inegi_data(serie)
             if not data.empty:
                 INEGIConnector.save_data(data[serie], metadata)
@@ -72,7 +98,7 @@ if __name__=='__main__':
                 logging.warning(f"No se obtuvieron datos para la serie {serie}")
         
         # Series de FRED
-        for serie in fred_series:
+        for serie in fred_series.keys():
             data, metadata = fred.get_fred_data(serie)
             if not data.empty:
                 FREDConnector.save_data(data[serie], metadata)

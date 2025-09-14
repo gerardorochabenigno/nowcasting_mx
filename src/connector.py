@@ -56,7 +56,7 @@ class INEGIConnector:
             return (pd.DataFrame(), {})
     
     @staticmethod  
-    def save_data(series:pd.Series, metadata:dict, path_csv:str='data/inegi/csv', path_json:str='data/inegi/json'):
+    def save_data(series:pd.Series, metadata:dict, path_csv:str='data/raw/inegi/csv', path_json:str='data/raw/inegi/json'):
         """Método para guardar los datos descargados del Banco de Indicadores del INEGI"""
         
         try:
@@ -115,7 +115,7 @@ class FREDConnector:
             return (pd.DataFrame(), {})
     
     @staticmethod  
-    def save_data(series:pd.Series, metadata:dict, path_csv:str='data/fred/csv', path_json:str='data/fred/json'):
+    def save_data(series:pd.Series, metadata:dict, path_csv:str='data/raw/fred/csv', path_json:str='data/raw/fred/json'):
         """Método para guardar los datos descargados de FRED"""
         
         try:
@@ -179,7 +179,7 @@ class BanxicoConnector:
                 return (pd.DataFrame(), {})
             
     @staticmethod  
-    def save_data(series:pd.Series, metadata:dict, path_csv:str='data/banxico/csv', path_json:str='data/banxico/json'):
+    def save_data(series:pd.Series, metadata:dict, path_csv:str='data/raw/banxico/csv', path_json:str='data/raw/banxico/json'):
         """Método para guardar los datos descargados del Banco de Indicadores del INEGI"""
         
         try:
